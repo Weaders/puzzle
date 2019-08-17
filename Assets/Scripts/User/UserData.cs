@@ -7,13 +7,10 @@ namespace Game.User {
 
     public class UserData {
 
-        private const string IS_FULL_ACCESS_CODE = "is_full_access";
-
         private const string IS_EASY_ACCESS_CODE = "is_easy_access";
 
         private const string IS_HARD_ACCESS_CODE = "is_hard_access";
 
-        private bool _isFullAccess = false;
         private bool _isAccessEasyLvl = false;
         private bool _isAccessHardLvl = false;
 
@@ -31,19 +28,6 @@ namespace Game.User {
             Debug.Log($"User easy access - {_isAccessEasyLvl}");
             Debug.Log($"User hard access - {_isAccessHardLvl}");
 
-        }
-
-        public bool isFullAccess {
-            get {
-                return _isFullAccess;
-            }
-            set {
-
-                _isFullAccess = value;
-                PlayerPrefs.SetInt(IS_FULL_ACCESS_CODE, value ? 1 : 0);
-                onChange.Invoke(this);
-
-            }
         }
 
         public bool isAccessEasyLevel {

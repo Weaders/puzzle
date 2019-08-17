@@ -1,9 +1,5 @@
 ﻿using Game.Common;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Purchasing;
 
@@ -14,8 +10,11 @@ namespace Assets.Scripts.IAP {
         private static IExtensionProvider _extensionPrvdr;
 
         public readonly static string productIdFullAccess = "full_access";
+        public readonly static string productIdLevel1Access = "level1";
 
         private readonly static string productFullAccessGoogle = "full_access";
+        private readonly static string productLevel1AccessGoogle = "level1";
+        private readonly static string productIdLevel1AccessApple = "com.apple.level1";
         private readonly static string productFullAccessApple = "com.apple.full_access";
 
         private void Start() {
@@ -38,6 +37,11 @@ namespace Assets.Scripts.IAP {
             builder.AddProduct(productIdFullAccess, ProductType.NonConsumable, new IDs {
                 { productFullAccessApple, AppleAppStore.Name },
                 { productFullAccessGoogle, GooglePlay.Name }
+            })
+            .AddProduct(productIdLevel1Access, ProductType.NonConsumable, new IDs {
+                { productIdLevel1AccessApple, AppleAppStore.Name },
+                { productLevel1AccessGoogle, GooglePlay.Name }
+
             });
 
             UnityPurchasing.Initialize(this, builder);
@@ -103,7 +107,21 @@ namespace Assets.Scripts.IAP {
             _extensionPrvdr = extensions;
 
             // Check is product already buyed.
-            SceneData.GetUserData().isFullAccess = _storeCtrl.products.WithID(productIdFullAccess).hasReceipt;
+            if (_storeCtrl.products.WithID(productIdFullAccess).hasReceipt) {
+
+                var userData = SceneData.GetUserData();
+
+                userData.isAccessEasyLevel = true;
+                userData.isAccessHardLevel = true;
+
+            }
+
+            if (_storeCtrl.products.WithID(productIdLevel1Access).hasReceipt) {
+
+                var userData = SceneData.GetUserData();
+                userData.isAccessEasyLevel = true;
+
+            }
 
         }
 
@@ -123,6 +141,14 @@ namespace Assets.Scripts.IAP {
 
                 userData.isAccessEasyLevel = true;
                 userData.isAccessHardLevel = true;
+
+                Debug.Log($"Purchase: {e.purchasedProduct.definition.id}");
+
+            } else if (string.Equals(e.purchasedProduct.definition.id, productIdLevel1Access, StringComparison.Ordinal)) {
+
+                var userData = SceneData.GetUserData();
+
+                userData.isAccessEasyLevel = true;
 
                 Debug.Log($"Purchase: {e.purchasedProduct.definition.id}");
 
